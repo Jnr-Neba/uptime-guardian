@@ -1,0 +1,10 @@
+name: Hello CI
+on: [push]
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "CI is alive"
+      - run: echo "Runner OS is $RUNNER_OS"
+      - run: node --version
+      - run: docker --version
