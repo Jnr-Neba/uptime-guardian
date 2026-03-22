@@ -1,0 +1,12 @@
+replicaCount: 1
+
+resources:
+  requests:
+    memory: "32Mi"
+    cpu: "25m"
+  limits:
+    memory: "64Mi"
+    cpu: "50m"
+
+env:
+  NODE_ENV: development

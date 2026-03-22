@@ -1,0 +1,51 @@
+replicaCount: 2
+
+image:
+  repository: 758955050042.dkr.ecr.ca-central-1.amazonaws.com/uptime-guardian
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: ecr-secret
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 3000
+  nodePort: 30080
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+  limits:
+    memory: "128Mi"
+    cpu: "100m"
+
+livenessProbe:
+  path: /healthz
+  port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+readinessProbe:
+  path: /readyz
+  port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 3
+
+env:
+  NODE_ENV: production
+
+serviceAccount:
+  create: false
+  name: ""
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false
+
+httpRoute:
+  enabled: false

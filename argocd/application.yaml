@@ -8,7 +8,10 @@ spec:
   source:
     repoURL: https://github.com/Jnr-Neba/uptime-guardian
     targetRevision: main
-    path: k8s
+    path: helm/uptime-guardian
+    helm:
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default
