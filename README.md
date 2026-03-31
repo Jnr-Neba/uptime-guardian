@@ -42,55 +42,39 @@ Uptime Guardian gives you:
 
 ## Architecture
 
-The system is built around a GitOps philosophy — the Git repository is the 
-single source of truth for what runs in production. No manual deployments, 
-no configuration drift, no "works on my machine."
-```
-Developer pushes code
-        │
-        ▼
-┌─────────────────┐
-│   GitHub        │  Source of truth for both
-│   Repository    │  application code and
-│                 │  infrastructure config
-└────────┬────────┘
-         │ triggers
-         ▼
-┌─────────────────────────────────────────┐
-│         GitHub Actions (CI/CD)          │
-│                                         │
-│  CI  →  lint, test, verify app starts  │
-│  CD  →  build Docker image             │
-│         push to ECR (commit SHA tag)   │
-└────────────────┬────────────────────────┘
-                 │ image pushed
-                 ▼
-┌─────────────────┐
-│  Amazon ECR     │  Private image registry
-│  Image Registry │  Every image tagged with
-│                 │  exact commit SHA
-└────────┬────────┘
-         │ pulls image
-         ▼
-┌─────────────────────────────────────────┐
-│            Kubernetes Cluster           │
-│                                         │
-│  Deployment → manages 2 Pod replicas   │
-│  Service    → stable network address   │
-│  Probes     → liveness + readiness     │
-│                                         │
-│  Pod 1 ──┐                             │
-│           ├── NodePort Service :30080  │
-│  Pod 2 ──┘                             │
-└─────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│  /dashboard     │  Live ops view
-│  /healthz       │  Kubernetes liveness
-│  /readyz        │  Kubernetes readiness
-│  /api/check     │  Endpoint checker API
-└─────────────────┘
+The system is built around a GitOps philosophy — Git is the single source of truth for what runs in production. No manual deployments, no configuration drift.
+```mermaid
+flowchart TD
+    DEV["Developer\npushes code"]
+    GH["GitHub\nuptime-guardian"]
+    GA["GitHub Actions\nCI/CD Pipeline"]
+    ECR["Amazon ECR\nImage Registry"]
+    ARGO["ArgoCD\nGitOps Controller"]
+    HELM["Helm Chart\nPackaged Manifests"]
+    K8S["Kubernetes Cluster"]
+    DEP["Deployment\n2 replicas"]
+    SVC["NodePort Service\n:30080"]
+    CRON["CronJob\nECR secret refresh"]
+    PROM["Prometheus\nMetrics scraper"]
+    GRAF["Grafana\nDashboards"]
+    APP["Uptime Guardian\n/dashboard /metrics"]
+    USER["User"]
+
+    DEV -->|git push| GH
+    GH -->|triggers| GA
+    GA -->|docker build + push| ECR
+    GH -->|watches repo| ARGO
+    ARGO -->|renders| HELM
+    HELM -->|applies manifests| K8S
+    ECR -->|pulls image| K8S
+    K8S --> DEP
+    K8S --> SVC
+    K8S --> CRON
+    DEP --> APP
+    SVC --> APP
+    APP -->|/metrics| PROM
+    PROM -->|data source| GRAF
+    USER -->|:30080| SVC
 ```
 
 ### CI vs CD — what's the difference?
