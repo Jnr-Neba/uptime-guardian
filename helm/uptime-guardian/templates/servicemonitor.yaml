@@ -11,7 +11,7 @@ spec:
       - default
   selector:
     matchLabels:
-      app: uptime-guardian
+      app.kubernetes.io/name: uptime-guardian
   endpoints:
     - port: http
       path: /metrics
