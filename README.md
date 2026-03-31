@@ -205,14 +205,26 @@ uptime-guardian/
 
 ---
 
+## Roadmap
+
+- [x] Dockerised Node.js application
+- [x] GitHub Actions CI/CD pipeline
+- [x] Amazon ECR image registry with lifecycle policy
+- [x] Kubernetes deployment with self-healing
+- [x] ECR secret auto-refresh CronJob
+- [x] ArgoCD GitOps deployment
+- [x] Helm chart with multi-environment values
+- [x] Prometheus metrics endpoint
+- [x] Grafana dashboard
+- [x] Complete architecture diagram
+
 ## Planned improvements
 
-- [ ] ArgoCD GitOps — automatic deployment on every merge to main
-- [ ] Prometheus metrics endpoint — expose app metrics for scraping
-- [ ] Grafana dashboard — visualise historical uptime and latency
 - [ ] Alert manager — notify on endpoint failures
-- [ ] Full architecture diagram
-
+- [ ] Background workers — automated endpoint watchlist
+- [ ] SLOs — define and track availability targets
+- [ ] Load testing with k6
+- [ ] Multi-tenant support
 ---
 
 *Built by [Jnr-Neba](https://github.com/Jnr-Neba) · Open to contributions*
